@@ -1,13 +1,15 @@
 import {Component, OnInit} from '@angular/core';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {FormControl, FormGroupDirective, NgForm, Validators} from '@angular/forms';
+import {AuthenticationService} from '../services/authentication-service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-tab1',
   templateUrl: 'tab1.page.html',
   styleUrls: ['tab1.page.scss']
 })
-export class Tab1Page implements OnInit {
+export class Tab1Page {
   emailFormControl = new FormControl('', [
     Validators.required,
     Validators.email,
@@ -18,18 +20,26 @@ export class Tab1Page implements OnInit {
 
   matcher = new MyErrorStateMatcher();
 
-  async ngOnInit() {
+  constructor(
+      public authService: AuthenticationService,
+      public router: Router) {
   }
 
-  login() {
-    console.log('ola');
-    return true;
-  }
 
   async onSubmit() {
     if (!this.emailFormControl.invalid && !this.passwordFormControl.invalid) {
-      console.log('Submit');
+      this.authService.SignIn(this.emailFormControl.value, this.passwordFormControl.value)
+          .then((res) => {
+            this.router.navigate(['tabs/tab2']);
+          })
+          .catch((error) => {
+            window.alert(error.message);
+          });
     }
+  }
+
+  logout() {
+    this.authService.SignOut();
   }
 }
 
