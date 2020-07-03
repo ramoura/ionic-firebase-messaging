@@ -26,9 +26,24 @@
                         Password is <strong>required</strong>
                     </mat-error>
                 </mat-form-field>
-                <button mat-button mat-flat-button color="primary">Login</button>
+                <button
+                        mat-button
+                        mat-flat-button
+                        color="primary"
+                        [class.spinner]="loading"
+                        [disabled]="loading || isLoggedIn()">
+                    Login
+                </button>
             </form>
-            <button mat-button mat-flat-button color="warn" (click)="logout()">Logout</button>
+            <br/>
+            <button
+                    *ngIf="isLoggedIn()"
+                    mat-button
+                    mat-flat-button
+                    color="warn"
+                    (click)="logout()">
+                Logout
+            </button>
         </mat-card-content>
     </mat-card>
 </ion-content>

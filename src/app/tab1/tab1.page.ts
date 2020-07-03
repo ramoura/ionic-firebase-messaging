@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component} from '@angular/core';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {FormControl, FormGroupDirective, NgForm, Validators} from '@angular/forms';
 import {AuthenticationService} from '../services/authentication-service';
@@ -20,6 +20,8 @@ export class Tab1Page {
 
   matcher = new MyErrorStateMatcher();
 
+  loading = false;
+
   constructor(
       public authService: AuthenticationService,
       public router: Router) {
@@ -28,11 +30,13 @@ export class Tab1Page {
 
   async onSubmit() {
     if (!this.emailFormControl.invalid && !this.passwordFormControl.invalid) {
+      this.loading = true;
       this.authService.SignIn(this.emailFormControl.value, this.passwordFormControl.value)
           .then((res) => {
-            this.router.navigate(['tabs/tab2']);
+            this.loading = false;
           })
           .catch((error) => {
+            this.loading = false;
             window.alert(error.message);
           });
     }
@@ -41,6 +45,11 @@ export class Tab1Page {
   logout() {
     this.authService.SignOut();
   }
+
+  isLoggedIn() {
+    return this.authService.isLoggedIn;
+  }
+
 }
 
 export class MyErrorStateMatcher implements ErrorStateMatcher {
